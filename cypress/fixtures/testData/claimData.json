@@ -19,5 +19,49 @@
     "internationalPostalCode": "22201",
     "pointOfContactName": "Jane Testman",
     "pointOfContactPhone": "2025550188"
+  },
+
+  "serviceHistory": {
+    "branchOfService": "Army",
+    "entryDate": "2000-01-15",
+    "exitDate": "2004-01-15",
+    "separationPlace": "Fort Hood, TX",
+    "enlistmentDate": "2000-01-15",
+    "dischargeDate": "2004-01-15"
+  },
+
+  "conditionSelection": {
+    "ptsd": {
+      "exposure": "Combat-related stress during military service",
+      "relation": "Experienced traumatic events during military service",
+      "year": "2013"
+    },
+    "toxicExposure": "No"
+  },
+
+  "mentalHealthStressors": {
+    "jobRole": "IT Specialist",
+    "rolesDuties": "Performed technical duties during military service, including maintaining systems, troubleshooting equipment, and supporting daily operations.",
+    "stressLevel": 5,
+
+    "deployed": "No",
+    "deathWitnessed": "No",
+    "naturalDisaster": "No",
+    "abusedOrAssaulted": "No",
+    "othersLivesAtRisk": "No",
+    "witnessedSevereAccidents": "No",
+    "accidentsOrCrashes": "No",
+    "cleanedAccidentSite": "No",
+    "medicalTrauma": "No",
+    "hazing": "No",
+    "abuseOfPower": "No",
+    "dangerousItems": "No",
+    "familyIssues": "No",
+
+    "otherEvents": "No additional events related to military service.",
+
+    "combatTraining": false,
+    "personalAssaultTrauma": "No",
+    "otherTraumaticEvent": false
   }
 }

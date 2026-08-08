@@ -1,21 +1,38 @@
 import PreScreeningFormPage from "../../pages/PreScreeningFormPage";
 import PersonalInformationPage from "../../pages/PersonalInformationPage";
+import ServiceHistoryPage from "../../pages/ServiceHistoryPage";
+import ConditionSelectionPage from "../../pages/ConditionSelectionPage";
+import MentalHealthStressorsPage from "../../pages/MentalHealthStressorsPage";
 
 describe("Claims", () => {
+
   it("TC-CLAIM-001: starts a new claim and completes pre-screening", () => {
 
-    // Login
+    // ==========================================
+    // LOGIN
+    // ==========================================
+
     cy.getAccount().then((account) => {
       cy.login(account.email, account.password);
     });
 
-    // Dashboard
+
+    // ==========================================
+    // DASHBOARD
+    // ==========================================
+
     cy.closeOnboardingModal();
 
-    cy.contains("Dashboard")
+    cy.contains("Dashboard", {
+      timeout: 60000
+    })
       .should("be.visible");
 
-    // Start a New Claim
+
+    // ==========================================
+    // START A NEW CLAIM
+    // ==========================================
+
     cy.contains(
       'button, a, [role="button"]',
       /START A NEW CLAIM/i,
@@ -25,7 +42,11 @@ describe("Claims", () => {
       .should("be.visible")
       .click();
 
-    // VA Connection & Verification
+
+    // ==========================================
+    // VA CONNECTION & VERIFICATION
+    // ==========================================
+
     cy.contains(
       "VA Connection & Verification",
       { timeout: 60000 }
@@ -41,11 +62,14 @@ describe("Claims", () => {
       .should("be.visible")
       .click();
 
-    // Pre-Screening Page
+
+    // ==========================================
+    // PRE-SCREENING
+    // ==========================================
+
     cy.url({ timeout: 60000 })
       .should("include", "/form/pre_screening");
 
-    // Fill Pre-Screening Form
     PreScreeningFormPage
       .assertLoaded()
       .selectBenefitType("Compensation")
@@ -53,15 +77,64 @@ describe("Claims", () => {
       .selectActiveIntent("No")
       .saveAndContinue();
 
-    // Personal Information
+
+    // ==========================================
+    // LOAD TEST DATA ONCE
+    // ==========================================
+
     cy.fixture("testData/claimData.json").then((claimData) => {
+
+
+      // ==========================================
+      // PERSONAL INFORMATION
+      // ==========================================
 
       PersonalInformationPage
         .assertLoaded()
-        .fillPersonalInformation(claimData.personalInformation)
+        .fillPersonalInformation(
+          claimData.personalInformation
+        )
+        .saveAndContinue();
+
+
+      // ==========================================
+      // SERVICE HISTORY
+      // ==========================================
+
+      ServiceHistoryPage
+        .assertLoaded()
+        .fillServiceHistory(
+          claimData.serviceHistory
+        )
+        .saveAndContinue();
+
+
+      // ==========================================
+      // CONDITION SELECTION
+      // PTSD ONLY
+      // ==========================================
+
+      ConditionSelectionPage
+        .assertLoaded()
+        .fillConditionSelection(
+          claimData.conditionSelection
+        )
+        .saveAndContinue();
+
+
+      // ==========================================
+      // MENTAL HEALTH STRESSORS
+      // ==========================================
+
+      MentalHealthStressorsPage
+        .assertLoaded()
+        .fillMentalHealthStressors(
+          claimData.mentalHealthStressors
+        )
         .saveAndContinue();
 
     });
 
   });
+
 });
