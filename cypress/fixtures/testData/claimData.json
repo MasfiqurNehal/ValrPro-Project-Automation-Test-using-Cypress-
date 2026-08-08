@@ -1,0 +1,23 @@
+{
+  "personalInformation": {
+    "firstName": "John",
+    "middleInitial": "M",
+    "lastName": "Testman",
+    "email": "john.testman@example.com",
+    "alternateEmail": "john.alt@example.com",
+    "ssn": "123-45-6789",
+    "usPhone": "2025550147",
+    "internationalPhone": "+1 2025550147",
+    "dateOfBirth": "1980-01-15",
+    "vaFileNumber": "12345678",
+    "serviceNumber": "987654321",
+    "streetAddress": "123 Test Street",
+    "aptSuiteUnit": "Apt 4B",
+    "city": "Arlington",
+    "state": "Virginia",
+    "zipCode": "22201",
+    "internationalPostalCode": "22201",
+    "pointOfContactName": "Jane Testman",
+    "pointOfContactPhone": "2025550188"
+  }
+}

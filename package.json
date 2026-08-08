@@ -1,0 +1,19 @@
+{
+  "name": "valrpro-testingg",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "test:accounts": "node scripts/run-all-accounts.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "cypress": "^15.19.0",
+    "cypress-mochawesome-reporter": "^4.0.2"
+  }
+}
