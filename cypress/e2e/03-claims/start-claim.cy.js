@@ -3,6 +3,9 @@ import PersonalInformationPage from "../../pages/PersonalInformationPage";
 import ServiceHistoryPage from "../../pages/ServiceHistoryPage";
 import ConditionSelectionPage from "../../pages/ConditionSelectionPage";
 import MentalHealthStressorsPage from "../../pages/MentalHealthStressorsPage";
+import MentalHealthImpactPage from "../../pages/MentalHealthImpactPage";
+import EvidenceUploadPage from "../../pages/EvidenceUploadPage";
+import ServicePayDirectDepositPage from "../../pages/ServicePayDirectDepositPage";
 
 describe("Claims", () => {
 
@@ -131,6 +134,35 @@ describe("Claims", () => {
         .fillMentalHealthStressors(
           claimData.mentalHealthStressors
         )
+        .saveAndContinue();
+
+      // ==========================================
+      // MENTAL HEALTH IMPACT
+      // ==========================================
+
+      MentalHealthImpactPage
+        .assertLoaded()
+        .fillMentalHealthImpact(
+          claimData.mentalHealthImpact
+        )
+        .saveAndContinue();
+
+      // ==========================================
+      // EVIDENCE UPLOAD
+      // ==========================================
+
+      EvidenceUploadPage
+        .assertLoaded()
+        .fillEvidenceUpload()
+        .saveAndContinue();
+
+      // ==========================================
+      // SERVICE PAY DIRECT DEPOSIT
+      // ==========================================
+
+      ServicePayDirectDepositPage
+        .assertLoaded()
+        .fillServicePayDirectDeposit()
         .saveAndContinue();
 
     });

@@ -63,5 +63,58 @@
     "combatTraining": false,
     "personalAssaultTrauma": "No",
     "otherTraumaticEvent": false
+  },
+  "mentalHealthImpact": {
+    "medicalVisits": "No change",
+    "occupationalChange": "No",
+    "leaveUse": "No change",
+    "performanceChanges": "No",
+    "depressionPanicAnxiety": "No",
+    "increasedMedicationAlcohol": "No",
+    "disciplinaryLegal": "No",
+    "eatingHabits": "No",
+    "pregnancyStdTests": "No",
+    "socialBehaviorChanges": "No",
+    "relationshipChanges": "No",
+
+    "additionalBehavioralChanges": "No additional behavioral changes.",
+
+    "officialReport": "No",
+
+    "officialReportDetails": "No official report was made.",
+
+    "treatmentReceived": "No",
+
+    "treatmentFacility1": "",
+    "treatmentFacility2": "",
+    "treatmentFacility3": "",
+
+    "treatmentMonth1": "",
+    "treatmentYear1": "",
+    "treatmentMonth2": "",
+    "treatmentYear2": "",
+    "treatmentMonth3": "",
+    "treatmentYear3": "",
+
+    "motivation": "No",
+    "dailyTasks": "No",
+    "gettingOutOfBed": "No",
+    "procrastination": "No",
+    "isolation": "No",
+    "avoidPublic": "No",
+    "lookForExits": "No",
+    "alwaysOnGuard": "No",
+    "sleepDifficulty": "No",
+    "nightmares": "No",
+    "exhaustedFoggy": "No",
+    "irritable": "No",
+    "snapEasily": "No",
+    "lackOfPatience": "No",
+    "avoidPeople": "No",
+    "substances": "No",
+    "burdenToFamily": "No",
+    "questionPurpose": "No",
+
+    "otherMentalHealthSymptoms": "No additional mental health symptoms or impacts."
   }
 }
