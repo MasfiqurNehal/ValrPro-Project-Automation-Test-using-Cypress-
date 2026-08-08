@@ -6,6 +6,7 @@ import MentalHealthStressorsPage from "../../pages/MentalHealthStressorsPage";
 import MentalHealthImpactPage from "../../pages/MentalHealthImpactPage";
 import EvidenceUploadPage from "../../pages/EvidenceUploadPage";
 import ServicePayDirectDepositPage from "../../pages/ServicePayDirectDepositPage";
+import ReviewAndSignPage from "../../pages/ReviewAndSignPage";
 
 describe("Claims", () => {
 
@@ -164,6 +165,16 @@ describe("Claims", () => {
         .assertLoaded()
         .fillServicePayDirectDeposit()
         .saveAndContinue();
+
+      // ==========================================
+      // REVIEW AND SIGN
+      // ==========================================
+
+      ReviewAndSignPage
+        .assertLoaded()
+        .fillReviewAndSign()
+        .saveAndPreview()
+        .completeNextFlow();
 
     });
 
