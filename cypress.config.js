@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const loggerFilePath = path.join(__dirname, "logger.txt");
+const accountsFilePath = path.join(__dirname, "cypress", "fixtures", "accounts.json");
 
 function truncateValue(value) {
   if (value === null || value === undefined || value === "") {
@@ -58,6 +59,36 @@ function formatLogEntry(entry = {}) {
   }
 
   return parts.join(" ");
+}
+
+function loadPrimaryAccount(desiredAccountId) {
+  if (!fs.existsSync(accountsFilePath)) {
+    return null;
+  }
+
+  try {
+    const accounts = JSON.parse(fs.readFileSync(accountsFilePath, "utf8"));
+    if (!Array.isArray(accounts) || !accounts.length) {
+      return null;
+    }
+
+    const selectedAccount =
+      desiredAccountId
+        ? accounts.find((account) => account && (account.id === desiredAccountId || account.email === desiredAccountId))
+        : accounts[0];
+
+    if (!selectedAccount || !selectedAccount.email || !selectedAccount.password) {
+      return null;
+    }
+
+    return {
+      id: selectedAccount.id || selectedAccount.email,
+      email: selectedAccount.email,
+      password: selectedAccount.password,
+    };
+  } catch (error) {
+    return null;
+  }
 }
 
 module.exports = defineConfig({
@@ -137,6 +168,9 @@ module.exports = defineConfig({
       });
 
       on("task", {
+        "accounts:get"(desiredAccountId) {
+          return loadPrimaryAccount(desiredAccountId);
+        },
         log(message) {
           console.log(message);
           return null;

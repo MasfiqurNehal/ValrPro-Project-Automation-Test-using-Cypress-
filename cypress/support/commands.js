@@ -11,15 +11,21 @@ Cypress.Commands.add("getAccount", () => {
   const envPassword = Cypress.env("accountPassword") || Cypress.env("valrPassword");
   const envId = Cypress.env("accountId") || Cypress.env("valrId");
 
-  if (envEmail && envPassword) {
-    return cy.wrap({
-      id: envId || envEmail,
-      email: envEmail,
-      password: envPassword,
-    });
-  }
+  return cy.task("accounts:get", envId).then((account) => {
+    if (account && account.email && account.password) {
+      return account;
+    }
 
-  return cy.fixture("accounts").then((accounts) => accounts[0]);
+    if (envEmail && envPassword) {
+      return {
+        id: envId || envEmail,
+        email: envEmail,
+        password: envPassword,
+      };
+    }
+
+    return cy.fixture("accounts").then((accounts) => accounts[0]);
+  });
 });
 
 Cypress.Commands.add("login", (email, password) => {

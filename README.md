@@ -60,49 +60,40 @@ Copy-Item cypress/fixtures/accounts.example.json cypress/fixtures/accounts.json
 
 Then update the copied files with your real values.
 
-### 1. `cypress.env.json`
+### 1. `cypress/fixtures/accounts.json`
 
-This file stores the Cypress environment values used by the tests.
+This file is the primary source for login credentials used by the tests.
 
-Expected keys:
+Example:
 
-- `accountEmail`
-- `accountPassword`
-- `accountId`
+```json
+[{
+  "id": "acct-001",
+  "email": "test.user@example.com",
+  "password": "your-real-password"
+}]
+```
 
-Legacy keys are also supported:
+Use the email and password values from this file for login, subscription, and claim flows.
 
-- `valrEmail`
-- `valrPassword`
-- `valrId`
+### 2. `cypress.env.json`
+
+This file is optional.
+
+It is only needed if you want to:
+
+- choose a specific account from `cypress/fixtures/accounts.json` by setting `accountId`
+- keep older env-based credentials as a fallback if `accounts.json` is missing
 
 Example:
 
 ```json
 {
-  "accountId": "acct-001",
-  "accountEmail": "test.user@example.com",
-  "accountPassword": "your-real-password"
+  "accountId": "acct-001"
 }
 ```
 
-### 2. `cypress/fixtures/accounts.json`
-
-This file is used by the multi-account runner.
-
-Example:
-
-```json
-[
-  {
-    "id": "acct-001",
-    "email": "test.user@example.com",
-    "password": "your-real-password"
-  }
-]
-```
-
-If you want to run `npm run test:accounts`, this file must exist and contain at least one valid account.
+If `cypress.env.json` is not present, the suite will still use `cypress/fixtures/accounts.json`.
 
 ## Project Configuration
 
@@ -126,7 +117,7 @@ If the staging site changes, update the base URL in `cypress.config.js`.
 
 ### 01 Authentication
 
-Verifies that a user can log in and land on the dashboard.
+Verifies that a user can log in and land on the dashboard using the account from `cypress/fixtures/accounts.json`.
 
 ### 02 Subscription
 
