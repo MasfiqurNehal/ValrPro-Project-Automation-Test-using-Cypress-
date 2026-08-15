@@ -20,6 +20,31 @@ class DashboardPage {
     return this;
   }
 
+  closePushNotificationsModalIfPresent(deadline = Date.now() + 6000) {
+    const dialogSelector = '[role="dialog"]';
+    const rejectButtonSelector = 'button, a, [role="button"]';
+
+    cy.get("body").then(($body) => {
+      const pushModal = [...$body.find(dialogSelector)].find((dialog) => {
+        const text = dialog.textContent || "";
+        return /Push Notifications/i.test(text) && /Reject/i.test(text);
+      });
+
+      if (pushModal) {
+        cy.wrap(pushModal).within(() => {
+          cy.contains(rejectButtonSelector, /^Reject$/i, { timeout: 1000 }).click();
+        });
+
+        cy.get("body").should("not.contain", "Push Notifications");
+      } else if (Date.now() < deadline) {
+        cy.wait(250);
+        this.closePushNotificationsModalIfPresent(deadline);
+      }
+    });
+
+    return this;
+  }
+
   get secureVeteranPlanButton() {
     return cy.contains("button, a", "Secure Your Veteran Plan");
   }
@@ -45,6 +70,12 @@ class DashboardPage {
   assertSubscriptionActive() {
     cy.url().should("include", "/dashboard");
     cy.contains("Update Plan").should("be.visible");
+    return this;
+  }
+
+  dismissDashboardPopupsIfPresent() {
+    this.closeOnboardingModalIfPresent();
+    this.closePushNotificationsModalIfPresent();
     return this;
   }
 }

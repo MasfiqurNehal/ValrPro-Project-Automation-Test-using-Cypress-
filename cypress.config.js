@@ -88,7 +88,7 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
 
   e2e: {
-    baseUrl: "https://stage-veteran.valr.me/",
+    baseUrl: "https://staging-veteran.valr.me/",
 
     setupNodeEvents(on, config) {
       require("cypress-mochawesome-reporter/plugin")(on);

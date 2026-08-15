@@ -281,11 +281,22 @@ class ReviewAndSignPage {
 
     completeNextFlow() {
 
-        // Wait for popup / signing UI
-        cy.wait(3000);
+        // Wait for the document generation step to finish before trying to advance.
+        cy.contains(
+            "Generating VA claim documents...",
+            { timeout: 120000 }
+        )
+            .should("not.exist");
 
-        // Click Next repeatedly while available
-        const clickNext = () => {
+        cy.contains(
+            "Please wait while we prepare and evaluate your documents. This process may take a moment.",
+            { timeout: 120000 }
+        )
+            .should("not.exist");
+
+        // Keep polling for the Next button because each step may take time to
+        // render before the next action becomes available.
+        const clickNext = (misses = 0) => {
 
             cy.get("body").then(($body) => {
 
@@ -305,11 +316,15 @@ class ReviewAndSignPage {
                     cy.wrap(nextButton.first())
                         .scrollIntoView()
                         .should("be.visible")
+                        .should("not.be.disabled")
                         .click();
 
-                    cy.wait(1000);
+                    cy.wait(2000);
 
-                    clickNext();
+                    clickNext(0);
+                } else if (misses < 8) {
+                    cy.wait(2000);
+                    clickNext(misses + 1);
                 }
             });
         };

@@ -1,12 +1,20 @@
-# ValrPro Cypress Automation Tests
+# VALRPRO Cypress E2E Test Suite
 
 This repository contains the Cypress end-to-end test suite for the VALRPRO staging application.
 
-It covers the main user journeys for the staging environment:
+It automates the main user journeys for the staging environment:
 
 - Authentication and dashboard access
 - Subscription flow through Stripe Checkout
 - Starting a new claim and completing the pre-screening flow
+
+## Overview
+
+The project is organized as a Cypress page-object test suite. Test specs live under `cypress/e2e`, shared helpers and custom commands live under `cypress/support`, and reusable page objects live under `cypress/pages`.
+
+The suite is configured for the staging site:
+
+- `https://staging-veteran.valr.me/`
 
 ## Tech Stack
 
@@ -14,83 +22,119 @@ It covers the main user journeys for the staging environment:
 - JavaScript
 - Cypress Mochawesome Reporter
 
-## Project Structure
+## Repository Structure
 
 ```text
 cypress/
-  e2e/             # Test specs
-  fixtures/        # Test data and account data
-  pages/           # Page objects and UI selectors
-  support/         # Custom Cypress commands and setup
+  e2e/             # End-to-end specs
+  fixtures/        # Test data, credentials examples, and account data
+  pages/           # Page objects and reusable UI actions
+  support/         # Custom Cypress commands and lifecycle hooks
 scripts/           # Utility scripts
 ```
 
 ## Prerequisites
 
-- A recent Node.js LTS version
+- Node.js LTS
 - npm
 - Access to the VALRPRO staging application
 
 ## Install
 
-From the project root:
+From a fresh clone, install dependencies from the project root:
 
 ```bash
 npm install
 ```
 
-## Local Files You Must Create
+## First-Time Local Setup
 
-Some files are intentionally ignored by Git because they may contain secrets, machine-specific settings, or generated output.
+This project expects a couple of local-only files that are intentionally not meant to be committed.
 
-After cloning this repository, create these files locally:
-
-- `cypress.env.json`
-- `cypress/fixtures/accounts.json`
-
-You can use the example files that are committed to the repo:
-
-- `cypress.env.example.json`
-- `cypress/fixtures/accounts.example.json`
-
-Copy each example file to its real filename and replace the placeholder values with your real test credentials.
-
-In PowerShell, you can do that with:
+Create them by copying the example files:
 
 ```powershell
 Copy-Item cypress.env.example.json cypress.env.json
 Copy-Item cypress/fixtures/accounts.example.json cypress/fixtures/accounts.json
 ```
 
-### Environment Variables
+Then update the copied files with your real values.
 
-The tests read these Cypress env keys:
+### 1. `cypress.env.json`
+
+This file stores the Cypress environment values used by the tests.
+
+Expected keys:
 
 - `accountEmail`
 - `accountPassword`
 - `accountId`
 
-For compatibility, the suite also accepts the older names:
+Legacy keys are also supported:
 
 - `valrEmail`
 - `valrPassword`
 - `valrId`
 
-If `accountEmail` and `accountPassword` are provided, they are used first.
+Example:
 
-### Account Fixture
+```json
+{
+  "accountId": "acct-001",
+  "accountEmail": "test.user@example.com",
+  "accountPassword": "your-real-password"
+}
+```
 
-The multi-account script reads `cypress/fixtures/accounts.json` and expects entries like this:
+### 2. `cypress/fixtures/accounts.json`
+
+This file is used by the multi-account runner.
+
+Example:
 
 ```json
 [
   {
     "id": "acct-001",
     "email": "test.user@example.com",
-    "password": "your-password"
+    "password": "your-real-password"
   }
 ]
 ```
+
+If you want to run `npm run test:accounts`, this file must exist and contain at least one valid account.
+
+## Project Configuration
+
+The Cypress base URL is defined in `cypress.config.js`:
+
+```text
+https://staging-veteran.valr.me/
+```
+
+The config also enables:
+
+- Videos for test runs
+- Screenshots on failure
+- Mochawesome HTML reports in `cypress/reports`
+- A custom run log in `logger.txt`
+- `chromeWebSecurity: false` so the suite can interact with Stripe Checkout's nested iframe flow
+
+If the staging site changes, update the base URL in `cypress.config.js`.
+
+## Test Coverage
+
+### 01 Authentication
+
+Verifies that a user can log in and land on the dashboard.
+
+### 02 Subscription
+
+Verifies the basic plan subscription flow through Stripe test checkout.
+
+### 03 Claims
+
+Verifies the full claim creation flow, including the pre-screening steps and the later claim form steps.
 
 ## Running Tests
 
@@ -112,59 +156,48 @@ npm run cy:run
 npm run test:accounts
 ```
 
-This script loops through every entry in `cypress/fixtures/accounts.json` and runs the Cypress suite for each account.
+This script reads `cypress/fixtures/accounts.json`, then runs the Cypress suite once for each account in that file.
 
-## Configuration
+## Fixtures and Test Data
 
-The Cypress base URL is configured in `cypress.config.js`:
+The claim flow uses the following fixture files:
 
-`https://stage-veteran.valr.me/`
+- `cypress/fixtures/testData/claimData.json`
+- `cypress/fixtures/testData/card.json`
 
-If the staging site changes, update the base URL there.
+The Stripe card fixture is for test checkout data only.
 
-The Cypress config also enables:
+## Shared Cypress Helpers
 
-- Videos for test runs
-- Screenshots on failure
-- Mochawesome HTML reports in `cypress/reports`
-- A custom logger file at `logger.txt`
+The suite includes reusable helpers for:
 
-## Test Coverage
+- Logging into the application
+- Dismissing onboarding and claim popups
+- Filling the Stripe test checkout
+- Moving through the claim flow
 
-### Authentication
-
-Verifies that a user can log in and land on the dashboard.
-
-### Subscription
-
-Verifies the basic plan subscription flow through Stripe Checkout.
-
-### Claims
-
-Verifies starting a new claim and moving through the pre-screening form.
+These helpers live in `cypress/support/commands.js` and the page objects under `cypress/pages`.
 
 ## Generated Output
 
-These folders and files are created when tests run and are intentionally ignored:
+These files and folders are created during test runs and are intentionally ignored:
 
 - `cypress/screenshots/`
 - `cypress/videos/`
 - `cypress/downloads/`
 - `cypress/reports/`
-- `mochawesome-report/`
 - `logger.txt`
 - `debug.log`
 
-## Notes
+## Troubleshooting
 
-- Stripe Checkout is a cross-origin flow, so the Cypress config disables `chromeWebSecurity` to reach the embedded Stripe form.
-- If Stripe shows bot protection or hCaptcha instead of the expected checkout form, the subscription test cannot continue from that environment.
-- The test data in `cypress/fixtures/testData/` is used by the claim flow and the Stripe card form.
+- If `npm install` has already been completed but Cypress still will not launch, make sure the Cypress binary finished installing correctly.
+- If PowerShell blocks `npm` with an execution policy error on Windows, try running the command in Command Prompt, Git Bash, or use `npm.cmd` in PowerShell.
+- If Stripe Checkout shows bot protection or hCaptcha instead of the expected checkout form, the subscription test cannot continue from that environment.
+- If you change the staging domain, update `baseUrl` in `cypress.config.js` first.
 
-## Quick Start For A New Clone
+## Notes for Contributors
 
-1. Clone the repository.
-2. Run `npm install`.
-3. Copy `cypress.env.example.json` to `cypress.env.json` and add your credentials.
-4. Copy `cypress/fixtures/accounts.example.json` to `cypress/fixtures/accounts.json` and add your test accounts.
-5. Run `npm run cy:open`, `npm run cy:run`, or `npm run test:accounts`.
+- Keep secrets and account credentials out of Git history.
+- Update the example files whenever you add a new required local setting.
+- If you add new major flows, document them here so the next developer knows how the suite is organized.

@@ -17,9 +17,9 @@ function failIfStripeIsBlocked() {
     if (blocked) {
       throw new Error(
         `Stripe Checkout was replaced by an hCaptcha/bot-protection page instead of the payment form. ` +
-          `That means Cypress cannot reach the normal Stripe sandbox UI from this environment. ` +
-          `Open the checkout manually and whitelist the test route, disable bot protection for staging, or use a test-only subscription API flow. ` +
-          `Current URL: ${href}`
+        `That means Cypress cannot reach the normal Stripe sandbox UI from this environment. ` +
+        `Open the checkout manually and whitelist the test route, disable bot protection for staging, or use a test-only subscription API flow. ` +
+        `Current URL: ${href}`
       );
     }
   });
@@ -46,9 +46,9 @@ describe("Subscription", () => {
           if (/hcaptcha|api\.hcaptcha\.com|captcha/i.test(href)) {
             throw new Error(
               `Stripe Checkout was replaced by an hCaptcha/bot-protection page instead of the payment form. ` +
-                `That means Cypress cannot reach the normal Stripe sandbox UI from this environment. ` +
-                `Open the checkout manually and whitelist the test route, disable bot protection for staging, or use a test-only subscription API flow. ` +
-                `Current URL: ${href}`
+              `That means Cypress cannot reach the normal Stripe sandbox UI from this environment. ` +
+              `Open the checkout manually and whitelist the test route, disable bot protection for staging, or use a test-only subscription API flow. ` +
+              `Current URL: ${href}`
             );
           }
         });

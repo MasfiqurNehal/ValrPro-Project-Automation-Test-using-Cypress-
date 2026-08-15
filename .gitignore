@@ -1,6 +1,6 @@
 node_modules/
-cypress.env.json
 .env
+cypress.env.json
 
 # per-account credentials — treat like cypress.env.json
 cypress/fixtures/accounts.json
@@ -9,8 +9,8 @@ cypress/screenshots/
 cypress/videos/
 cypress/downloads/
 
-reports/
 cypress/reports/
 mochawesome-report/
 debug.log
 logger.txt
+cypress-*.log

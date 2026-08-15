@@ -41,7 +41,7 @@ Cypress.Commands.add("login", (email, password) => {
 });
 
 Cypress.Commands.add("closeOnboardingModal", () => {
-  DashboardPage.closeOnboardingModalIfPresent();
+  DashboardPage.dismissDashboardPopupsIfPresent();
 });
 
 Cypress.Commands.add("fillStripeCheckout", (card) => {
