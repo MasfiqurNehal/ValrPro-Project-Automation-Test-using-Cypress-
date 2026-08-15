@@ -2,79 +2,92 @@
 
 This repository contains the Cypress end-to-end test suite for the VALRPRO staging application.
 
-It automates the main user journeys for the staging environment:
+It covers the main user journeys for the staging environment:
 
 - Authentication and dashboard access
 - Subscription flow through Stripe Checkout
 - Starting a new claim and completing the pre-screening flow
 
-## Overview
+## What This Project Is
 
-The project is organized as a Cypress page-object test suite. Test specs live under `cypress/e2e`, shared helpers and custom commands live under `cypress/support`, and reusable page objects live under `cypress/pages`.
+This is a Cypress page-object test suite. The repository is organized so that:
 
-The suite is configured for the staging site:
+- test specs live in `cypress/e2e`
+- reusable page objects live in `cypress/pages`
+- custom Cypress commands and hooks live in `cypress/support`
+- test fixtures and example credential files live in `cypress/fixtures`
+
+The tests are configured to run against:
 
 - `https://staging-veteran.valr.me/`
 
-## Tech Stack
+## Requirements For A New Windows PC
 
-- Cypress 15
-- JavaScript
-- Cypress Mochawesome Reporter
-
-## Repository Structure
-
-```text
-cypress/
-  e2e/             # End-to-end specs
-  fixtures/        # Test data, credentials examples, and account data
-  pages/           # Page objects and reusable UI actions
-  support/         # Custom Cypress commands and lifecycle hooks
-scripts/           # Utility scripts
-```
-
-## Prerequisites
+Before running the project, install:
 
 - Node.js LTS
 - npm
-- Access to the VALRPRO staging application
+- Google Chrome
 
-## Install
+If PowerShell blocks `npm`, use `npm.cmd` instead of `npm`.
 
-From a fresh clone, install dependencies from the project root:
+## Clone The Repository
+
+On a new computer:
+
+```bash
+git clone https://github.com/MasfiqurNehal/ValrPro-Project-Automation-Test-using-Cypress-.git
+cd ValrPro-Project-Automation-Test-using-Cypress-
+```
+
+If you already downloaded the project as a zip file, open the extracted folder instead.
+
+## Install Dependencies
+
+From the project root:
 
 ```bash
 npm install
 ```
 
+If PowerShell gives an execution policy error, run:
+
+```powershell
+npm.cmd install
+```
+
 ## First-Time Local Setup
 
-This project expects a couple of local-only files that are intentionally not meant to be committed.
+This project needs a couple of local files that are not meant to be committed.
 
-Create them by copying the example files:
+Copy the example files after cloning:
 
 ```powershell
 Copy-Item cypress.env.example.json cypress.env.json
 Copy-Item cypress/fixtures/accounts.example.json cypress/fixtures/accounts.json
 ```
 
-Then update the copied files with your real values.
+Then edit the copied files with real values.
 
 ### 1. `cypress/fixtures/accounts.json`
 
-This file is the primary source for login credentials used by the tests.
+This is the primary login credential file used by the tests.
 
 Example:
 
 ```json
-[{
-  "id": "acct-001",
-  "email": "test.user@example.com",
-  "password": "your-real-password"
-}]
+[
+  {
+    "id": "acct-001",
+    "email": "test.user@example.com",
+    "password": "your-real-password"
+  }
+]
 ```
 
-Use the email and password values from this file for login, subscription, and claim flows.
+Use the email and password in this file for the login, subscription, and claim flows.
+
+If you have more than one test account, add more objects to the array.
 
 ### 2. `cypress.env.json`
 
@@ -82,8 +95,8 @@ This file is optional.
 
 It is only needed if you want to:
 
-- choose a specific account from `cypress/fixtures/accounts.json` by setting `accountId`
-- keep older env-based credentials as a fallback if `accounts.json` is missing
+- select a specific account from `cypress/fixtures/accounts.json` by setting `accountId`
+- keep older env-based credentials as a fallback
 
 Example:
 
@@ -93,27 +106,71 @@ Example:
 }
 ```
 
-If `cypress.env.json` is not present, the suite will still use `cypress/fixtures/accounts.json`.
+If `cypress.env.json` is missing, the suite still works as long as `cypress/fixtures/accounts.json` exists.
 
-## Project Configuration
-
-The Cypress base URL is defined in `cypress.config.js`:
+## Project Structure
 
 ```text
-https://staging-veteran.valr.me/
+cypress/
+  e2e/             # End-to-end specs
+  fixtures/         # Test data, example credentials, account data
+  pages/           # Page objects and reusable UI actions
+  support/         # Custom Cypress commands and lifecycle hooks
+scripts/           # Utility scripts
 ```
 
-The config also enables:
+## Main Configuration
 
-- Videos for test runs
-- Screenshots on failure
+The main Cypress configuration is in `cypress.config.js`.
+
+Important settings:
+
+- base URL: `https://staging-veteran.valr.me/`
+- videos enabled for test runs
+- screenshots enabled on failure
 - Mochawesome HTML reports in `cypress/reports`
-- A custom run log in `logger.txt`
-- `chromeWebSecurity: false` so the suite can interact with Stripe Checkout's nested iframe flow
+- `chromeWebSecurity: false` so Stripe Checkout can be tested
 
-If the staging site changes, update the base URL in `cypress.config.js`.
+If the staging domain changes in the future, update `baseUrl` in `cypress.config.js`.
 
-## Test Coverage
+## Test Data Files
+
+The claim flow uses these fixtures:
+
+- `cypress/fixtures/testData/claimData.json`
+- `cypress/fixtures/testData/card.json`
+
+The Stripe card file contains test card values only.
+
+## Running The Project
+
+### Open Cypress UI
+
+```bash
+npm run cy:open
+```
+
+If PowerShell blocks `npm`, use:
+
+```powershell
+npm.cmd run cy:open
+```
+
+### Run All Tests Headlessly
+
+```bash
+npm run cy:run
+```
+
+### Run The Multi-Account Script
+
+```bash
+npm run test:accounts
+```
+
+This script reads `cypress/fixtures/accounts.json` and runs the Cypress suite once for each account in that file.
+
+## What The Tests Cover
 
 ### 01 Authentication
 
@@ -125,53 +182,22 @@ Verifies the basic plan subscription flow through Stripe test checkout.
 
 ### 03 Claims
 
-Verifies the full claim creation flow, including the pre-screening steps and the later claim form steps.
+Verifies the full claim creation flow, including the pre-screening steps and later claim form steps.
 
-## Running Tests
+## Shared Helpers
 
-### Open Cypress UI
+The suite includes reusable Cypress helpers for:
 
-```bash
-npm run cy:open
-```
-
-### Run All Tests Headlessly
-
-```bash
-npm run cy:run
-```
-
-### Run the Multi-Account Script
-
-```bash
-npm run test:accounts
-```
-
-This script reads `cypress/fixtures/accounts.json`, then runs the Cypress suite once for each account in that file.
-
-## Fixtures and Test Data
-
-The claim flow uses the following fixture files:
-
-- `cypress/fixtures/testData/claimData.json`
-- `cypress/fixtures/testData/card.json`
-
-The Stripe card fixture is for test checkout data only.
-
-## Shared Cypress Helpers
-
-The suite includes reusable helpers for:
-
-- Logging into the application
-- Dismissing onboarding and claim popups
-- Filling the Stripe test checkout
-- Moving through the claim flow
+- logging into the application
+- dismissing onboarding and dashboard popups
+- filling the Stripe test checkout
+- moving through the claim flow
 
 These helpers live in `cypress/support/commands.js` and the page objects under `cypress/pages`.
 
 ## Generated Output
 
-These files and folders are created during test runs and are intentionally ignored:
+These files and folders are created during test runs and are intentionally not committed:
 
 - `cypress/screenshots/`
 - `cypress/videos/`
@@ -182,13 +208,19 @@ These files and folders are created during test runs and are intentionally ignor
 
 ## Troubleshooting
 
-- If `npm install` has already been completed but Cypress still will not launch, make sure the Cypress binary finished installing correctly.
-- If PowerShell blocks `npm` with an execution policy error on Windows, try running the command in Command Prompt, Git Bash, or use `npm.cmd` in PowerShell.
-- If Stripe Checkout shows bot protection or hCaptcha instead of the expected checkout form, the subscription test cannot continue from that environment.
-- If you change the staging domain, update `baseUrl` in `cypress.config.js` first.
+- If Cypress does not launch, confirm Node.js is installed and rerun `npm install`.
+- If PowerShell blocks the npm command, use `npm.cmd`.
+- If login uses the wrong account, check `cypress/fixtures/accounts.json` first.
+- If you want to force a specific account when multiple accounts exist, set `accountId` in `cypress.env.json`.
+- If Stripe Checkout shows bot protection or hCaptcha, the subscription test may not be able to complete from that environment.
 
-## Notes for Contributors
+## Notes For New Developers
 
-- Keep secrets and account credentials out of Git history.
-- Update the example files whenever you add a new required local setting.
-- If you add new major flows, document them here so the next developer knows how the suite is organized.
+1. Clone the repository.
+2. Run `npm install`.
+3. Copy `cypress.env.example.json` to `cypress.env.json`.
+4. Copy `cypress/fixtures/accounts.example.json` to `cypress/fixtures/accounts.json`.
+5. Add your real test account credentials to `cypress/fixtures/accounts.json`.
+6. Run `npm run cy:open` or `npm run cy:run`.
+
+That is the minimum setup needed to run the suite on a new Windows computer.
