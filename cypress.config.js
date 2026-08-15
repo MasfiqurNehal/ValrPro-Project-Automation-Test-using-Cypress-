@@ -1,4 +1,64 @@
 const { defineConfig } = require("cypress");
+const fs = require("fs");
+const path = require("path");
+
+const loggerFilePath = path.join(__dirname, "logger.txt");
+
+function truncateValue(value) {
+  if (value === null || value === undefined || value === "") {
+    return "";
+  }
+
+  let text;
+
+  if (typeof value === "string") {
+    text = value;
+  } else {
+    try {
+      text = JSON.stringify(value);
+    } catch (error) {
+      text = String(value);
+    }
+  }
+
+  if (text.length > 2000) {
+    return `${text.slice(0, 2000)}...`;
+  }
+
+  return text;
+}
+
+function formatLogEntry(entry = {}) {
+  const parts = [`[${new Date().toISOString()}]`, `[event=${entry.event || "EVENT"}]`];
+
+  if (entry.spec) {
+    parts.push(`[spec=${truncateValue(entry.spec)}]`);
+  }
+
+  if (entry.test) {
+    parts.push(`[test=${truncateValue(entry.test)}]`);
+  }
+
+  if (entry.method) {
+    parts.push(`[method=${truncateValue(entry.method)}]`);
+  }
+
+  if (entry.url) {
+    parts.push(`[url=${truncateValue(entry.url)}]`);
+  }
+
+  if (entry.status !== undefined && entry.status !== null) {
+    parts.push(`[status=${truncateValue(entry.status)}]`);
+  }
+
+  const payload = entry.details !== undefined ? entry.details : entry.info;
+
+  if (payload !== undefined && payload !== null && payload !== "") {
+    parts.push(`[details=${truncateValue(payload)}]`);
+  }
+
+  return parts.join(" ");
+}
 
 module.exports = defineConfig({
   video: true,
@@ -28,13 +88,66 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
 
   e2e: {
-    baseUrl: "https://stage-veteran.valr.me",
+    baseUrl: "https://stage-veteran.valr.me/",
 
     setupNodeEvents(on, config) {
       require("cypress-mochawesome-reporter/plugin")(on);
+
+      on("before:run", (details) => {
+        const shouldAppend = Boolean(config.env.loggerAppend);
+        const baseUrl = config.baseUrl || (config.e2e && config.e2e.baseUrl);
+        const header = [
+          "==================================================",
+          formatLogEntry({
+            event: "RUN_START",
+            details: {
+              browser: details.browser && details.browser.name,
+              configFile: details.configFile,
+              cypressVersion: details.cypressVersion,
+              baseUrl,
+              accountId: config.env.accountId,
+              accountEmail: config.env.accountEmail,
+            },
+          }),
+        ].join("\n");
+
+        if (shouldAppend && fs.existsSync(loggerFilePath)) {
+          fs.appendFileSync(loggerFilePath, `\n${header}\n`, "utf8");
+        } else {
+          fs.writeFileSync(loggerFilePath, `${header}\n`, "utf8");
+        }
+      });
+
+      on("after:run", (details) => {
+        fs.appendFileSync(
+          loggerFilePath,
+          `${formatLogEntry({
+            event: "RUN_END",
+            details: {
+              totalTests: details.totalTests,
+              totalPassed: details.totalPassed,
+              totalFailed: details.totalFailed,
+              totalPending: details.totalPending,
+              totalSkipped: details.totalSkipped,
+              duration: details.totalDuration,
+            },
+          })}\n`,
+          "utf8"
+        );
+      });
+
       on("task", {
         log(message) {
           console.log(message);
+          return null;
+        },
+        "logger:append"(message) {
+          const line = typeof message === "string" ? message : formatLogEntry(message);
+          fs.appendFileSync(loggerFilePath, `${line}\n`, "utf8");
+          return null;
+        },
+        "logger:reset"() {
+          fs.writeFileSync(loggerFilePath, "", "utf8");
           return null;
         },
       });

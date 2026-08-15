@@ -13,3 +13,4 @@ reports/
 cypress/reports/
 mochawesome-report/
 debug.log
+logger.txt
