@@ -78,9 +78,9 @@ Example:
 ```json
 [
   {
-    "id": "acct-001",
-    "email": "test.user@example.com",
-    "password": "your-real-password"
+    "id": "acct-----",
+    "email": "--------@---.com",
+    "password": "---------"
   }
 ]
 ```
@@ -102,7 +102,9 @@ Example:
 
 ```json
 {
-  "accountId": "acct-001"
+  //Sandbox
+  "VEmail": "------------@-----.com",
+  "VPassword": "--------------"
 }
 ```
 
